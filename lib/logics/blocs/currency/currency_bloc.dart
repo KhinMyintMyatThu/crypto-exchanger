@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_app/data/models/currency_model.dart';
 import 'package:flutter_app/data/repositories/api_repository.dart';

@@ -72,7 +72,7 @@ class HomeCardWidget extends StatelessWidget {
                         Text(
                           price,
                           style: TextStyle(
-                              fontSize: 13.sp, fontWeight: FontWeight.bold),
+                              fontSize: 12.sp, fontWeight: FontWeight.bold),
                         )
                       ],
                     )),

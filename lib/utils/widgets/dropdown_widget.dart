@@ -33,11 +33,12 @@ class _DropDownWidget extends State<DropDownWidget> {
           value: widget.dropdownValue,
           icon: const Icon(
             Icons.arrow_drop_down_rounded,
-            color: Colors.black,
+            color: Colors.black87,
             size: 35,
           ),
           elevation: 16,
-          style: TextStyle(color: Colors.black, fontSize: 13.0.sp),
+          style: TextStyle(
+              color: Colors.black, fontSize: 11.0.sp, fontFamily: 'Roboto'),
           isExpanded: true,
           underline: Container(
             height: 1,

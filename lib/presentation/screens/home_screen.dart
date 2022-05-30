@@ -99,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _showLoading() {
     return const Center(
-      child: SpinKitPouringHourGlass(
+      child: SpinKitPouringHourGlassRefined(
         color: Colors.black,
-        size: 50.0,
+        size: 40.0,
       ),
     );
   }
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 30.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: Colors.deepPurpleAccent,
+                  color: Colors.black87,
                 ),
                 child: const SkeletonLoading()));
       }
@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 30.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: Colors.deepPurpleAccent,
+                  color: Colors.black87,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Exchanger',
                             style:
-                                TextStyle(fontSize: 13.sp, color: Colors.white),
+                                TextStyle(fontSize: 12.sp, color: Colors.white),
                           )),
                       const SizedBox(width: 10),
                       DropDownWidget(
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             'Crypto',
                             style:
-                                TextStyle(fontSize: 13.sp, color: Colors.white),
+                                TextStyle(fontSize: 12.sp, color: Colors.white),
                           )),
                       const SizedBox(width: 10),
                       DropDownWidget(
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       'Updated at - ${currency.updatedAt}',
-                      style: TextStyle(fontSize: 9.sp),
+                      style: TextStyle(fontSize: 9.sp, color: Colors.white),
                     )
                   ],
                 )));

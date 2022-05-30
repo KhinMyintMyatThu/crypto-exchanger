@@ -24,10 +24,9 @@ class MyApp extends StatelessWidget {
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
+            theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Roboto'),
             onGenerateRoute: _appRouter.onGeneratedRoute,
           );
         }));
