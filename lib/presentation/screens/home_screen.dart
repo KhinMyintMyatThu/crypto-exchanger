@@ -135,94 +135,96 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Container(
-                          width: 25.w,
-                          child: Text(
-                            'Exchanger',
-                            style:
-                                TextStyle(fontSize: 12.sp, color: Colors.white),
-                          )),
-                      const SizedBox(width: 10),
-                      DropDownWidget(
-                          onChangedCallback: (value) {
-                            setState(() {
-                              chosenExchanger = value!;
-                              cryptoCurrencies = _getCurrencies();
-                              chosenCurrency = cryptoCurrencies[0]!;
-                              currency = _getCurrency();
-                            });
-                          },
-                          dropdownValue: chosenExchanger,
-                          valueList: exchangers)
-                    ]),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Container(
-                          width: 25.w,
-                          child: Text(
-                            'Crypto',
-                            style:
-                                TextStyle(fontSize: 12.sp, color: Colors.white),
-                          )),
-                      const SizedBox(width: 10),
-                      DropDownWidget(
-                          onChangedCallback: (value) {
-                            setState(() {
-                              chosenCurrency = value!;
-                              currency = _getCurrency();
-                            });
-                          },
-                          dropdownValue: chosenCurrency,
-                          valueList: cryptoCurrencies),
-                    ]),
-                    const SizedBox(
-                      height: 17,
-                    ),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Text(
-                          '1 ${currency.baseAsset} ~ ${currency.exchangePrice} ${currency.quoteAsset}',
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 12.sp)),
-                      const SizedBox(width: 5),
-                      (currency.marketChangePrice != null &&
-                              currency.marketChangePrice > 0)
-                          ? Text(
-                              '(+' +
-                                  double.parse(
-                                          currency.marketChangePrice.toString())
-                                      .toStringAsFixed(2) +
-                                  '%)',
-                              style: TextStyle(color: Colors.green.shade500),
-                            )
-                          : Text(
-                              '(' +
-                                  double.parse(
-                                          currency.marketChangePrice.toString())
-                                      .toStringAsFixed(2) +
-                                  '%)',
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                      (currency.marketChangePrice > 0)
-                          ? Icon(Icons.arrow_upward,
-                              size: 17, color: Colors.green.shade500)
-                          : const Icon(Icons.arrow_downward,
-                              size: 17, color: Colors.red)
-                    ]),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      'Updated at - ${currency.updatedAt}',
-                      style: TextStyle(fontSize: 9.sp, color: Colors.white),
-                    )
+                    _exchangerBuilder(),
+                    const SizedBox(height: 30),
+                    _cryptoBuilder(),
+                    const SizedBox(height: 17),
+                    _converterInfo(),
+                    const SizedBox(height: 15),
+                    _updatedTime()
                   ],
                 )));
       }
       return Container();
     });
+  }
+
+  _exchangerBuilder() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+          width: 25.w,
+          child: Text(
+            'Exchanger',
+            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+          )),
+      const SizedBox(width: 10),
+      DropDownWidget(
+          onChangedCallback: (value) {
+            setState(() {
+              chosenExchanger = value!;
+              cryptoCurrencies = _getCurrencies();
+              chosenCurrency = cryptoCurrencies[0]!;
+              currency = _getCurrency();
+            });
+          },
+          dropdownValue: chosenExchanger,
+          valueList: exchangers)
+    ]);
+  }
+
+  _cryptoBuilder() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+          width: 25.w,
+          child: Text(
+            'Crypto',
+            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+          )),
+      const SizedBox(width: 10),
+      DropDownWidget(
+          onChangedCallback: (value) {
+            setState(() {
+              chosenCurrency = value!;
+              currency = _getCurrency();
+            });
+          },
+          dropdownValue: chosenCurrency,
+          valueList: cryptoCurrencies),
+    ]);
+  }
+
+  _converterInfo() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+          '1 ${currency.baseAsset} ~ ${currency.exchangePrice} ${currency.quoteAsset}',
+          style: TextStyle(color: Colors.white, fontSize: 12.sp)),
+      const SizedBox(width: 5),
+      (currency.marketChangePrice != null && currency.marketChangePrice > 0)
+          ? Text(
+              '(+' +
+                  double.parse(currency.marketChangePrice.toString())
+                      .toStringAsFixed(2) +
+                  '%)',
+              style: TextStyle(color: Colors.green.shade500),
+            )
+          : Text(
+              '(' +
+                  double.parse(currency.marketChangePrice.toString())
+                      .toStringAsFixed(2) +
+                  '%)',
+              style: const TextStyle(color: Colors.red),
+            ),
+      (currency.marketChangePrice > 0)
+          ? Icon(Icons.arrow_upward, size: 17, color: Colors.green.shade500)
+          : const Icon(Icons.arrow_downward, size: 17, color: Colors.red)
+    ]);
+  }
+
+  _updatedTime() {
+    return Text(
+      'Updated at - ${currency.updatedAt}',
+      style: TextStyle(fontSize: 9.sp, color: Colors.white),
+    );
   }
 
   _showCurrencyData() {
@@ -249,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Something went wrong',
+            'Something went wrong!',
             style: TextStyle(fontSize: 20),
           ),
           const SizedBox(
