@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _getExchangers() {
+    print('hello 12');
     return currencies.map((e) => e.exchangeID).toList().toSet().toList();
   }
 
@@ -64,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _getCurrency() {
+    print('hello 33');
     return currencies
         .where((e) => e.exchangeID == chosenExchanger)
         .firstWhere((e) => e.currencySymbol == chosenCurrency);
