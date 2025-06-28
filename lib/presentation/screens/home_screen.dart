@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _getCurrencies() {
-    print('hello 1');
+    print('hello confirmed');
     return currencies
         .where((e) => e.exchangeID == chosenExchanger)
         .map((e) => e.currencySymbol)
