@@ -37,6 +37,7 @@ dependencies:
   intl: ^0.17.0
   sizer: ^2.0.15
   flag: ^6.0.0
+  shimmer: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,10 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

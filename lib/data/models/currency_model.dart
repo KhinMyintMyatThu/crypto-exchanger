@@ -6,7 +6,7 @@ class Currency {
   dynamic exchangePrice;
   Map<String, dynamic>? intlCurrencies; 
   DateTime? updatedAt;
-  dynamic marketChangePrice;
+  dynamic marketChangePrice = 0.0;
 
   Currency({this.exchangeID, this.currencySymbol, this.baseAsset, this.quoteAsset, this.exchangePrice, this.intlCurrencies, this.updatedAt, this.marketChangePrice});
  

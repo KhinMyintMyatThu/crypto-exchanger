@@ -9,7 +9,6 @@ class ApiRepository {
   getCurrencyData() async {
     List<Currency> currencies = [];
     var url = currencyApi;
-    Map<String, dynamic> returnValue;
 
     Response res = await http.get(Uri.parse(url));
 
@@ -27,10 +26,9 @@ class ApiRepository {
             marketChangePrice: item['change_24h']);
         currencies.add(currency);
       }
-      returnValue = {'currencies': currencies, 'hasError': false};
     } else {
-      returnValue = {'currencies': currencies, 'hasError': true};
+      currencies = [];
     }
-    return returnValue;
+    return currencies;
   }
 }

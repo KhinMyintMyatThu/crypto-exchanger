@@ -4,6 +4,7 @@ import 'package:flutter_app/data/models/currency_model.dart';
 import 'package:flutter_app/logics/blocs/currency/currency_bloc.dart';
 import 'package:flutter_app/utils/widgets/card_widget.dart';
 import 'package:flutter_app/utils/widgets/dropdown_widget.dart';
+import 'package:flutter_app/utils/widgets/skeleton_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sizer/sizer.dart';
@@ -25,34 +26,38 @@ class _HomeScreenState extends State<HomeScreen> {
   Currency currency = Currency();
 
   List<String?> exchangers = [];
-  bool isLoading = true;
+
+  bool showToolBar = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     CurrencyState state =
         BlocProvider.of<CurrencyBloc>(context, listen: true).state;
-    if (state is CurrencyLoading) {
-      setState(() {
-        isLoading = true;
-      });
-    }
     if (state is CurrencyLoaded) {
       setState(() {
-        isLoading = false;
         currencies = state.currencies;
         exchangers = _getExchangers();
         cryptoCurrencies = _getCurrencies();
+        chosenCurrency = cryptoCurrencies[0]!;
         currency = _getCurrency();
+        showToolBar = true;
+      });
+    }
+    if (state is CurrencyFetchingError) {
+      setState(() {
+        showToolBar = false;
       });
     }
   }
 
   _getExchangers() {
+    print('hello');
     return currencies.map((e) => e.exchangeID).toList().toSet().toList();
   }
 
   _getCurrencies() {
+    print('hello confirm');
     return currencies
         .where((e) => e.exchangeID == chosenExchanger)
         .map((e) => e.currencySymbol)
@@ -60,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _getCurrency() {
+    print('hello 2');
     return currencies
         .where((e) => e.exchangeID == chosenExchanger)
         .firstWhere((e) => e.currencySymbol == chosenCurrency);
@@ -73,157 +79,198 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           title: _titleContainer(),
-          toolbarHeight: 270,
+          toolbarHeight: (showToolBar == true) ? 270 : 0,
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-              child: Column(children: [
+        body: SafeArea(child:
             BlocBuilder<CurrencyBloc, CurrencyState>(builder: (context, state) {
-              if (state is CurrencyLoading) {
-                return _showLoading();
-              }
-              if (state is CurrencyLoaded) {
-                return _showCurrencyData();
-              }
-              if (state is CurrencyFetchingError) {
-                return _showError();
-              }
-              return Container();
-            })
-          ])),
-        ),
+          if (state is CurrencyLoading) {
+            return _showLoading();
+          }
+          if (state is CurrencyLoaded) {
+            return _showCurrencyData();
+          }
+          if (state is CurrencyFetchingError) {
+            return _showError();
+          }
+          return Container();
+        })),
       ),
     );
   }
 
   Widget _showLoading() {
     return const Center(
-      child: SpinKitPouringHourGlass(
+      child: SpinKitPouringHourGlassRefined(
         color: Colors.black,
-        size: 50.0,
+        size: 40.0,
       ),
     );
   }
 
   _titleContainer() {
-    return Material(
-        elevation: 7.0,
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          width: double.infinity,
-          height: 30.h,
-          decoration: BoxDecoration(
+    return BlocBuilder<CurrencyBloc, CurrencyState>(builder: (context, state) {
+      if (state is CurrencyLoading) {
+        return Material(
+            elevation: 7.0,
             borderRadius: BorderRadius.circular(30),
-            color: Colors.deepPurpleAccent,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                    width: 25.w,
-                    child: Text(
-                      'Exchanger',
-                      style: TextStyle(fontSize: 13.sp, color: Colors.white),
-                    )),
-                const SizedBox(width: 10),
-                DropDownWidget(
-                    onChangedCallback: (value) {
-                      setState(() {
-                        chosenExchanger = value!;
-                        cryptoCurrencies = _getCurrencies();
-                        currency = _getCurrency();
-                      });
-                    },
-                    dropdownValue: chosenExchanger,
-                    valueList: exchangers)
-              ]),
-              const SizedBox(
-                height: 30,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                    width: 25.w,
-                    child: Text(
-                      'Crypto',
-                      style: TextStyle(fontSize: 13.sp, color: Colors.white),
-                    )),
-                const SizedBox(width: 10),
-                DropDownWidget(
-                    onChangedCallback: (value) {
-                      setState(() {
-                        chosenCurrency = value!;
-                        currency = _getCurrency();
-                      });
-                    },
-                    dropdownValue: chosenCurrency,
-                    valueList: cryptoCurrencies),
-              ]),
-              const SizedBox(
-                height: 17,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(
-                    '1 ${currency.baseAsset} ~ ${currency.exchangePrice} ${currency.quoteAsset}',
-                    style: TextStyle(color: Colors.white, fontSize: 12.sp)),
-                const SizedBox(width: 5),
-                (currency.marketChangePrice > 0)
-                    ? Text(
-                        '(+' +
-                            double.parse(currency.marketChangePrice.toString())
-                                .toStringAsFixed(2) +
-                            '%)',
-                        style: TextStyle(color: Colors.green.shade500),
-                      )
-                    : Text(
-                        '(' +
-                            double.parse(currency.marketChangePrice.toString())
-                                .toStringAsFixed(2) +
-                            '%)',
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                (currency.marketChangePrice > 0)
-                    ? Icon(Icons.arrow_upward,
-                        size: 17, color: Colors.green.shade500)
-                    : const Icon(Icons.arrow_downward,
-                        size: 17, color: Colors.red)
-              ]),
-              const SizedBox(
-                height: 15,
-              ),
-              Text(
-                'Updated at - ${currency.updatedAt}',
-                style: TextStyle(fontSize: 9.sp),
-              )
-            ],
-          ),
-        ));
+            child: Container(
+                width: double.infinity,
+                height: 30.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.black87,
+                ),
+                child: const SkeletonLoading()));
+      }
+      if (state is CurrencyLoaded) {
+        return Material(
+            elevation: 7.0,
+            borderRadius: BorderRadius.circular(30),
+            child: Container(
+                width: double.infinity,
+                height: 30.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.black87,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _exchangerBuilder(),
+                    const SizedBox(height: 30),
+                    _cryptoBuilder(),
+                    const SizedBox(height: 17),
+                    _converterInfo(),
+                    const SizedBox(height: 15),
+                    _updatedTime()
+                  ],
+                )));
+      }
+      return Container();
+    });
+  }
+
+  _exchangerBuilder() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+          width: 25.w,
+          child: Text(
+            'Exchanger',
+            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+          )),
+      const SizedBox(width: 10),
+      DropDownWidget(
+          onChangedCallback: (value) {
+            setState(() {
+              chosenExchanger = value!;
+              cryptoCurrencies = _getCurrencies();
+              chosenCurrency = cryptoCurrencies[0]!;
+              currency = _getCurrency();
+            });
+          },
+          dropdownValue: chosenExchanger,
+          valueList: exchangers)
+    ]);
+  }
+
+  _cryptoBuilder() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Container(
+          width: 25.w,
+          child: Text(
+            'Crypto',
+            style: TextStyle(fontSize: 12.sp, color: Colors.white),
+          )),
+      const SizedBox(width: 10),
+      DropDownWidget(
+          onChangedCallback: (value) {
+            setState(() {
+              chosenCurrency = value!;
+              currency = _getCurrency();
+            });
+          },
+          dropdownValue: chosenCurrency,
+          valueList: cryptoCurrencies),
+    ]);
+  }
+
+  _converterInfo() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+          '1 ${currency.baseAsset} ~ ${currency.exchangePrice} ${currency.quoteAsset}',
+          style: TextStyle(color: Colors.white, fontSize: 12.sp)),
+      const SizedBox(width: 5),
+      (currency.marketChangePrice != null && currency.marketChangePrice > 0)
+          ? Text(
+              '(+' +
+                  double.parse(currency.marketChangePrice.toString())
+                      .toStringAsFixed(2) +
+                  '%)',
+              style: TextStyle(color: Colors.green.shade500),
+            )
+          : Text(
+              '(' +
+                  double.parse(currency.marketChangePrice.toString())
+                      .toStringAsFixed(2) +
+                  '%)',
+              style: const TextStyle(color: Colors.red),
+            ),
+      (currency.marketChangePrice > 0)
+          ? Icon(Icons.arrow_upward, size: 17, color: Colors.green.shade500)
+          : const Icon(Icons.arrow_downward, size: 17, color: Colors.red)
+    ]);
+  }
+
+  _updatedTime() {
+    return Text(
+      'Updated at - ${currency.updatedAt}',
+      style: TextStyle(fontSize: 9.sp, color: Colors.white),
+    );
   }
 
   _showCurrencyData() {
     Map<String, dynamic>? intlCurrencies = currency.intlCurrencies;
 
     return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: intlCurrencies!.length,
         itemBuilder: (context, index) {
           String currencyName = intlCurrencies.keys.elementAt(index);
           return HomeCardWidget(
-            flagCode: _getFlagCode(currencyName),
-            currencyName: currencyName,
-            longTerm: _getLongTerm(currencyName),
-            price: num.parse(intlCurrencies[currencyName]['price'].toString())
-                .toStringAsFixed(2),
-          );
+              flagCode: _getFlagCode(currencyName),
+              currencyName: currencyName,
+              longTerm: _getLongTerm(currencyName),
+              price: num.parse(intlCurrencies[currencyName]['price'].toString())
+                  .toStringAsFixed(3),
+              base: currency.baseAsset);
         });
   }
 
   _showError() {
-    return const Center(
-      child: Text('Something went wrong'),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Something went wrong!',
+            style: TextStyle(fontSize: 20),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          InkWell(
+              onTap: () {
+                BlocProvider.of<CurrencyBloc>(context).add(LoadCurrencies());
+              },
+              child: const Text(
+                'Try Again',
+                style: TextStyle(
+                    decoration: TextDecoration.underline, color: Colors.blue),
+              ))
+        ],
+      ),
     );
   }
 

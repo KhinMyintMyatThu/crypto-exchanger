@@ -13,11 +13,15 @@ class CurrencyBloc extends Bloc<CurrencyEvent, CurrencyState> {
   }
 
   _onLoadCurrencies(event, Emitter<CurrencyState> emit) async {
-    Map<String, dynamic> value = await ApiRepository().getCurrencyData();
+    try {
+      List<Currency> value = await ApiRepository().getCurrencyData();
 
-    if (!value['hasError']) {
-      add(UpdateCurrencies(value['currencies']));
-    }else {
+      if (value.isNotEmpty) {
+        add(UpdateCurrencies(value));
+      } else {
+        add(ErrorFetching());
+      }
+    } on Exception catch (e) {
       add(ErrorFetching());
     }
   }
@@ -26,7 +30,7 @@ class CurrencyBloc extends Bloc<CurrencyEvent, CurrencyState> {
     emit(CurrencyLoaded(currencies: event.currencies));
   }
 
-  _onError(event, Emitter<CurrencyState> emit){
+  _onError(event, Emitter<CurrencyState> emit) {
     emit(CurrencyFetchingError());
   }
 }

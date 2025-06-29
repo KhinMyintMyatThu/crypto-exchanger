@@ -8,6 +8,7 @@ class HomeCardWidget extends StatelessWidget {
   final String? longTerm;
   final dynamic price;
   final dynamic changedPrice;
+  final String? base;
 
   const HomeCardWidget(
       {Key? key,
@@ -15,7 +16,8 @@ class HomeCardWidget extends StatelessWidget {
       this.currencyName,
       this.longTerm,
       this.price,
-      this.changedPrice})
+      this.changedPrice,
+      this.base})
       : super(key: key);
 
   @override
@@ -65,10 +67,12 @@ class HomeCardWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        Text('1 $base ~'),
+                        const SizedBox(height: 10),
                         Text(
                           price,
                           style: TextStyle(
-                              fontSize: 13.sp, fontWeight: FontWeight.bold),
+                              fontSize: 12.sp, fontWeight: FontWeight.bold),
                         )
                       ],
                     )),
